@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> <!-- bootstrap -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script> <!-- ioicon -->
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script> <!-- ioicon -->
+    <script src="js/login.js"></script>
     <title>Formulario de inicio de sesión</title>
 </head>
 <body>
@@ -17,33 +18,39 @@
             <img src="img/Logo.jpeg" alt="Logo" style="width:40px;" class="rounded-pill">
           </a>
         </div>
+        <div class="d-flex align-items-center justify-content-end w-100">
+            <p class="mb-0 text-white" id="User"></p>
+        </div>
     </nav>
 
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <form>
+    <div class="container d-flex justify-content-center align-items-center vh-100" id="Validation">
+        <form id="Formulario" method="post">
 
           <h1>Iniciar de sesión</h1>
           <br>
 
           <div class="input-group">
               <span class="input-group-text">@</span>
-              <input type="text" class="form-control" placeholder="Alias">
+              <input type="text" class="form-control" name="alias" id="alias" placeholder="Alias">
           </div>
           
           <div class="input-group">
-              <input type="text" class="form-control" placeholder="Contraseña">
+              <input type="password" class="form-control" name="password" placeholder="Contraseña">
               <span class="input-group-text"><ion-icon name="lock-closed-outline"></ion-icon><!--Mínimo 8 caracteres--></span>
           </div>
 
           <div class="container mt-3 justify-content-end">
               <button type="button" class="btn btn-primary btn-md">Cancelar</button>
-              <button type="button" class="btn btn-primary btn-md">Iniciar sesión</button>
+              <input type="submit" class="btn btn-primary btn-md" value="Iniciar sesión"></input>
           </div>
 
           <div class="input-group">
               <p>No tiene cuenta? <a href="registro.html">Registrarse</a></p>
           </div>
+          <p id="mensajeValidacion" style="color: red;"></p>
         </form>
+
+        </div>
     </div>
 
     <footer class="bg-dark text-white text-center py-3">
