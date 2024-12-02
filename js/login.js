@@ -1,10 +1,41 @@
-function Usuario() {
-    var NombreUsuario = document.getElementById("alias").value;
-
-    document.getElementById("User").innerHTML = NombreUsuario;
-}
-
 document.addEventListener("DOMContentLoaded", function () {
+
+    // Función para verificar si el usuario está logueado
+    function verificarSesion() {
+        fetch("php/login.php")
+            .then(response => response.json())
+            .then(data => {
+                if (data.logged_in) {
+                    // Si la sesión está activa, mostrar el mensaje de bienvenida
+                    mostrarMensajeBienvenida(data.alias);
+                } else {
+                    // Si no está logueado, mostrar el formulario de login
+                    mostrarFormularioLogin();
+                }
+            })
+            .catch(error => {
+                console.error("Error al verificar la sesión:", error);
+            });
+    }
+
+    // Función para mostrar el mensaje de bienvenida
+    function mostrarMensajeBienvenida(alias) {
+        const userDiv = document.getElementById("User");
+        userDiv.innerHTML = "Bienvenido, " + alias;
+        // Aquí puedes agregar el redireccionamiento si lo deseas
+        // window.location.href = "pagina_principal.html"; // Descomenta para redirigir
+    }
+
+    // Función para mostrar el formulario de login
+    function mostrarFormularioLogin() {
+        const form = document.getElementById("Formulario");
+        if (form) {
+            form.style.display = "block"; // Asegúrate de que el formulario sea visible
+        }
+    }
+
+    // Llamar a la función para verificar la sesión al cargar la página
+    verificarSesion();
 
     // Seleccionar el formulario y el div donde se mostrará la respuesta
     const form = document.getElementById("Formulario");
@@ -21,20 +52,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 body: formData
             })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(data => {
-                // Mostrar el HTML de respuesta en el div sin recargar la página
-                if(data == "Usuario o contraseña incorrectos"){
-                    mensajeValidacion.innerHTML = "<p>" + data + "</p>";
-                    mensajeValidacion.style.display = "block";
+                if (data.logged_in) {
+                    // Si el login es exitoso, mostrar el mensaje de bienvenida
+                    mostrarMensajeBienvenida(data.alias);
                 } else {
-                    Usuario();
-                    Validation.innerHTML = "<p>" + data + "</p>";
-                    Validation.style.display = "block";
+                    const mensajeValidacion = document.getElementById("mensajeValidacion");
+                    mensajeValidacion.innerHTML = "<p>" + data.message + "</p>";
+                    mensajeValidacion.style.display = "block";
                 }
             })
             .catch(error => {
-                // Mostrar mensaje de error en caso de que falle
+                const mensajeValidacion = document.getElementById("mensajeValidacion");
                 mensajeValidacion.innerHTML = "<p>Error al enviar el formulario.</p>";
                 console.error("Error:", error);
             });
