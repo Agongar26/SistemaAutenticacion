@@ -1,5 +1,5 @@
 <?php
-session_start(); // Inicia o reanuda la sesión
+session_start(); // Inicia la sesión
 
 // Configuración de conexión
 $servername = "localhost";
@@ -10,13 +10,13 @@ $dbname = "Usuarios";
 // Crear conexión
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Verificar conexión
+//Comprobar si ocurre algún error a la hora de establecer conexión con la base de datos
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Inicializamos variables
-$mensaje = "";
+// Inicializar la variable para mostrar mensaje en caso de error
+$error = "";
 
 // Procesar el formulario solo si se envía una solicitud POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_SESSION['alias'])) {
@@ -29,49 +29,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_SESSION['alias'])) {
 
     if ($alias && $password && $name && $apellidos && $date) {
         // Verificar si el alias ya está registrado
-        $sql = "SELECT * FROM Usuario WHERE alias = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $alias);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $sql = "SELECT * FROM Usuario WHERE alias = ?"; //Hacer consulta para obtener todos los datos del usuario con el alias especificado
+        $stmt = $conn->prepare($sql);   //Preparamos la consulta
+        $stmt->bind_param("s", $alias);     //Se asocian los parámetros
+        $stmt->execute();   //Se ejecuta la consulta
+        $result = $stmt->get_result();      //Obtener el resultado de la consulta
 
-        if ($result->num_rows > 0) {
-            $mensaje = "El alias ya está en uso. Por favor, elige otro.";
+        if ($result->num_rows > 0) {    //Comprobar si existe el alias en la base de datos
+            $error = "El alias ya está en uso. Por favor, elige otro.";
         } else {
             // Hashear la contraseña
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
             // Insertar el nuevo usuario
-            $sql2 = "INSERT INTO Usuario (alias, password, nombre, apellidos, fecha_nacimiento) VALUES (?, ?, ?, ?, ?)";
-            $stmt2 = $conn->prepare($sql2);
+            $sql2 = "INSERT INTO Usuario (alias, password, nombre, apellidos, fecha_nacimiento) VALUES (?, ?, ?, ?, ?)";    //Realizar el insert con los datos
+            $stmt2 = $conn->prepare($sql2);     //Preparar la consulta
 
             if ($stmt2) {
-                $stmt2->bind_param("sssss", $alias, $hashed_password, $name, $apellidos, $date);
+                $stmt2->bind_param("sssss", $alias, $hashed_password, $name, $apellidos, $date);    //Asociar los parámetros antes de ejecutar la consulta
 
                 if ($stmt2->execute()) {
                     // Guardar datos en sesión
-                    $_SESSION['alias'] = $alias;
-                    $_SESSION['nombre'] = $name;
-                    $_SESSION['apellido'] = $apellidos;
-                    $_SESSION['fecha_nacimiento'] = $date;
+                    $_SESSION['alias'] = $alias;    //Guardar alias del usuario
+                    $_SESSION['nombre'] = $name;    //Guardar nombre del usuario
+                    $_SESSION['apellido'] = $apellidos;     //Guardar los apellidos del usuario
+                    $_SESSION['fecha_nacimiento'] = $date;  //Guardar la fecha de nacimineto del usuario
 
-                    $mensaje = "Registro exitoso.";
+                    $error = "Registro exitoso.";
                 } else {
-                    $mensaje = "Error al registrar al usuario. Inténtalo más tarde.";
+                    $error = "Error al registrar al usuario. Inténtalo más tarde.";
                 }
 
-                $stmt2->close();
+                $stmt2->close();    //Cerrar la consulta
             } else {
-                $mensaje = "Error en la consulta de inserción. Verifica la base de datos.";
+                $error = "Error en la consulta de inserción. Verifica la base de datos.";
             }
         }
-        $stmt->close();
+        $stmt->close();     //Cerrar la consulta
     } else {
-        $mensaje = "Por favor, completa todos los campos.";
+        $error = "Por favor, completa todos los campos.";
     }
 }
 
-$conn->close();
+$conn->close();     //Cerrar la conexión con la base de datos
 ?>
 
 <!DOCTYPE html>
@@ -86,6 +86,7 @@ $conn->close();
     <title>Formulario de Registro</title>
 </head>
 <body>
+    
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
@@ -139,8 +140,8 @@ $conn->close();
                     <p>Ya tiene una cuenta? <a href="login.php">Iniciar sesión</a></p>
                 </div>
 
-                <?php if (!empty($mensaje)): ?>
-                    <p class="text-danger mt-3"><?php echo htmlspecialchars($mensaje); ?></p>
+                <?php if (!empty($error)): ?>
+                    <p class="text-danger mt-3"><?php echo htmlspecialchars($error); ?></p>
                 <?php endif; ?>
             </form>
         <?php else: ?>

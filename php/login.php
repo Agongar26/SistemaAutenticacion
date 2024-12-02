@@ -1,42 +1,43 @@
 <?php
-session_start(); // Inicia o reanuda la sesión
+session_start(); //Inicia la sesión
 
-// Inicializamos la variable $error para evitar posibles errores en caso de que no se haya definido antes.
-$error = "";
-
-// Conectar a la base de datos
+//Conectar a la base de datos
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "Usuarios";
 $conn = new mysqli($servername, $username, $password, $dbname);
 
+//Comprobar si ocurre algún error a la hora de establecer conexión con la base de datos
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+//Inicializamos la variable $error para evitar posibles errores en caso de que no se haya definido antes.
+$error = "";
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Obtener alias y contraseña del formulario
+    //Obtener alias y contraseña del formulario
     $alias = $_POST['alias'];
     $password = $_POST['password'];
 
-    // Verificar si el alias existe en la base de datos
-    $sql = "SELECT password FROM Usuario WHERE alias = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $alias);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    //Verificar si el alias existe en la base de datos
+    $sql = "SELECT * FROM Usuario WHERE alias = ?"; //Hacer consulta para obtener todos los datos del usuario con el alias especificado
+    $stmt = $conn->prepare($sql);   //Preparamos la consulta
+    $stmt->bind_param("s", $alias);     //Se asocian los parámetros
+    $stmt->execute();   //Se ejecuta la consulta
+    $result = $stmt->get_result();      //Obtener el resultado de la consulta
 
-    if ($result->num_rows > 0) {
+    if ($result->num_rows > 0) {    //Comprobar que exista registro en la base de datos con los datos especificados
         // Verificar la contraseña
         $row = $result->fetch_assoc();
         if (password_verify($password, $row['password'])) {
-            // Si las credenciales son correctas, iniciar la sesión
-            $_SESSION['alias'] = $alias;  // Guardamos el alias del usuario
+            //Si las credenciales son correctas, iniciar la sesión
+            $_SESSION['alias'] = $alias;  //Guardamos el alias del usuario
             $_SESSION['nombre'] = $row['nombre'];   //Guardamos el nombre del usuario
             $_SESSION['apellido'] = $row['apellidos'];  //Guardamos los apellidos del usuario  
             $_SESSION['fecha_nacimiento'] = $row['fecha_nacimiento'];   //Guardamos la fecha de nacimiento del usuario
-            header("Location: login.php");  // Redirigir a la página principal después del inicio de sesión exitoso
+            header("Location: login.php");  //Redirigir a la página principal después del inicio de sesión exitoso
             exit();
         } else {
             $error = "Usuario o contraseña incorrectos";
@@ -60,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> <!-- bootstrap -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script> <!-- ioicon -->
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script> <!-- ioicon -->
-    <script src="js/login.js"></script>
     <title>Formulario de inicio de sesión</title>
 </head>
 <body>
