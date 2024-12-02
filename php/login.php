@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <div class="input-group">
                     <span class="input-group-text">@</span>
-                    <input type="text" class="form-control" name="alias" id="alias" placeholder="Alias" required>
+                    <input type="text" class="form-control" name="alias" id="alias" placeholder="Alias" maxlength="15" required>
                 </div>
 
                 <div class="input-group">

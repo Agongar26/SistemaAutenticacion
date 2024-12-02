@@ -86,7 +86,7 @@ $conn->close();     //Cerrar la conexión con la base de datos
     <title>Formulario de Registro</title>
 </head>
 <body>
-    
+
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
@@ -109,7 +109,7 @@ $conn->close();     //Cerrar la conexión con la base de datos
 
                 <div class="input-group mb-3">
                     <span class="input-group-text">@</span>
-                    <input type="text" class="form-control" name="alias" placeholder="Alias" required>
+                    <input type="text" class="form-control" name="alias" placeholder="Alias" maxlength="15" required>
                 </div>
 
                 <div class="input-group mb-3">
